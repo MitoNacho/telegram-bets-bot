@@ -4,9 +4,10 @@ from telegram.ext import (
     CommandHandler,
     ContextTypes,
 )
+import os
 import sqlite3
 import logging
-import os
+
 
 # =========================
 # LOGS
@@ -24,7 +25,7 @@ logger = logging.getLogger(__name__)
 # =========================
 
 TOKEN = os.getenv("TOKEN")
-ADMIN_ID = 6982911761  # Tu Telegram ID
+ADMIN_ID = int(os.getenv("ADMIN_ID"))
 
 # =========================
 # BASE DE DATOS
