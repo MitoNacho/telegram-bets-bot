@@ -1,7 +1,12 @@
-from telegram import Update
+from telegram import (
+    Update,
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
+)
 from telegram.ext import (
     ApplicationBuilder,
     CommandHandler,
+    CallbackQueryHandler,
     ContextTypes,
 )
 import os
@@ -31,7 +36,7 @@ ADMIN_ID = int(os.getenv("ADMIN_ID"))
 # BASE DE DATOS
 # =========================
 
-conn = sqlite3.connect("bets.db", check_same_thread=False)
+conn = sqlite3.connect("/data/bets.db", check_same_thread=False)
 cursor = conn.cursor()
 
 cursor.execute("""
@@ -51,18 +56,60 @@ conn.commit()
 # =========================
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+    keyboard = [
+
+        [
+            InlineKeyboardButton(
+                "📋 Bets Activas",
+                callback_data="bets"
+            )
+        ],
+
+        [
+            InlineKeyboardButton(
+                "📜 Historial",
+                callback_data="historial"
+            )
+        ],
+
+        [
+            InlineKeyboardButton(
+                "📈 Estadísticas",
+                callback_data="stats"
+            )
+        ]
+
+    ]
+
+    reply_markup = InlineKeyboardMarkup(keyboard)
+
     await update.message.reply_text(
-        "📊 Bot de Bebeto activo\n\n"
-        
-        "Comandos:\n"
-        
-        # "/apuesta TEXTO | CUOTA\n"
-        # "/resultado ID win/lose\n"
-        
-        "/bets\n"
-        "/estadisticas\n"
-        "/recientes"
+        "📊 Bot de Bebeto activo",
+        reply_markup=reply_markup
     )
+
+# =========================
+# BOTONES
+# =========================
+
+async def botones(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+    query = update.callback_query
+
+    await query.answer()
+
+    if query.data == "bets":
+
+        await bets(update, context)
+
+    elif query.data == "historial":
+
+        await historial(update, context)
+
+    elif query.data == "stats":
+
+        await estadisticas(update, context)
 
 # =========================
 # COMANDO /apuesta
@@ -177,6 +224,7 @@ async def resultado(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def estadisticas(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
+    message = update.message or update.callback_query.message
     cursor.execute("SELECT COUNT(*) FROM bets")
     total = cursor.fetchone()[0]
 
@@ -203,7 +251,7 @@ async def estadisticas(update: Update, context: ContextTypes.DEFAULT_TYPE):
         f"📈 Winrate: {winrate}%"
     )
 
-    await update.message.reply_text(mensaje)
+    await message.reply_text(mensaje)
 
 # =========================
 # COMANDO /bets
@@ -211,6 +259,7 @@ async def estadisticas(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def bets(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
+    message = update.message or update.callback_query.message
     cursor.execute("""
         SELECT id, apuesta, cuota, resultado
         FROM bets
@@ -222,7 +271,7 @@ async def bets(update: Update, context: ContextTypes.DEFAULT_TYPE):
     apuestas = cursor.fetchall()
 
     if not apuestas:
-        await update.message.reply_text(
+        await message.reply_text(
             "❌ No hay apuestas registradas"
         )
         return
@@ -251,7 +300,7 @@ async def bets(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f"📊 Resultado: {resultado}\n\n"
         )
 
-    await update.message.reply_text(mensaje)
+    await message.reply_text(mensaje)
 
 # =========================
 # COMANDO /reset
@@ -273,6 +322,7 @@ async def reset(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def historial(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
+    message = update.message or update.callback_query.message
     cursor.execute("""
         SELECT id, apuesta, cuota, resultado
         FROM bets
@@ -285,7 +335,7 @@ async def historial(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     if not apuestas:
 
-        await update.message.reply_text(
+        await message.reply_text(
             "No hay apuestas finalizadas"
         )
 
@@ -303,7 +353,7 @@ async def historial(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f"💰 {bet[2]}\n\n"
         )
 
-    await update.message.reply_text(mensaje)
+    await message.reply_text(mensaje)
 
 # =========================
 # MAIN
@@ -318,6 +368,7 @@ app.add_handler(CommandHandler("estadisticas", estadisticas))
 app.add_handler(CommandHandler("bets", bets))
 app.add_handler(CommandHandler("reset", reset))
 app.add_handler(CommandHandler("recientes", historial))
+app.add_handler(CallbackQueryHandler(botones))
 print("Bot iniciado...")
 
 app.run_polling()
