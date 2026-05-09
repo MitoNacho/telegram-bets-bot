@@ -1,13 +1,15 @@
 from telegram import (
     Update,
-    InlineKeyboardButton,
-    InlineKeyboardMarkup,
+    ReplyKeyboardMarkup,
+    
 )
 from telegram.ext import (
     ApplicationBuilder,
     CommandHandler,
     CallbackQueryHandler,
     ContextTypes,
+    MessageHandler,
+    filters,
 )
 import os
 import sqlite3
@@ -59,35 +61,37 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     keyboard = [
 
-        [
-            InlineKeyboardButton(
-                "📋 Bets Activas",
-                callback_data="bets"
-            )
-        ],
+        ["📋 Bets", "📈 Estadísticas"],
 
-        [
-            InlineKeyboardButton(
-                "📜 Historial",
-                callback_data="historial"
-            )
-        ],
-
-        [
-            InlineKeyboardButton(
-                "📈 Estadísticas",
-                callback_data="stats"
-            )
-        ]
+        ["📜 Historial"]
 
     ]
 
-    reply_markup = InlineKeyboardMarkup(keyboard)
+    reply_markup = ReplyKeyboardMarkup(
+        keyboard,
+        resize_keyboard=True
+    )
 
     await update.message.reply_text(
-        "📊 Bot de Bebeto activo",
-        reply_markup=reply_markup
-    )
+    "📊 Bienvenido a Bebeto Bets",
+    reply_markup=reply_markup
+)
+
+async def menu_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+    text = update.message.text
+
+    if text == "📋 Bets":
+
+        await bets(update, context)
+
+    elif text == "📈 Estadísticas":
+
+        await estadisticas(update, context)
+
+    elif text == "📜 Historial":
+
+        await historial(update, context)
 
 # =========================
 # BOTONES
@@ -320,6 +324,10 @@ async def reset(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "🗑️ Todas las apuestas fueron eliminadas"
     )
 
+# =========================
+# COMANDO /stats (historial)
+# =========================
+
 async def historial(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     message = update.message or update.callback_query.message
@@ -369,6 +377,7 @@ app.add_handler(CommandHandler("bets", bets))
 app.add_handler(CommandHandler("reset", reset))
 app.add_handler(CommandHandler("recientes", historial))
 app.add_handler(CallbackQueryHandler(botones))
+app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND,menu_handler))
 print("Bot iniciado...")
 
 app.run_polling()
