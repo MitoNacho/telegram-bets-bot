@@ -396,7 +396,7 @@ async def historial(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         mensaje += (
             f"{emoji} #{bet[0]}\n"
-            f"📌 {bet[1]}\n"
+            f" {bet[1]}\n"
             f"💰 {bet[2]}\n\n"
         )
 
