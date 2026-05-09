@@ -243,6 +243,7 @@ async def resultado(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def estadisticas(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     message = update.message or update.callback_query.message
+
     cursor.execute("SELECT COUNT(*) FROM bets")
     total = cursor.fetchone()[0]
 
@@ -257,16 +258,39 @@ async def estadisticas(update: Update, context: ContextTypes.DEFAULT_TYPE):
     loses = cursor.fetchone()[0]
 
     winrate = 0
+    profit = 0
 
     if (wins + loses) > 0:
         winrate = round((wins / (wins + loses)) * 100, 2)
+
+
+    cursor.execute(
+        "SELECT cuota, resultado FROM bets WHERE resultado != 'pendiente'"
+    )
+
+    apuestas = cursor.fetchall()
+
+    for cuota, resultado in apuestas:
+
+        if resultado == "win":
+
+            profit += (cuota - 1)
+
+        elif resultado == "lose":
+
+            profit -= 1
+
+    profit = round(profit, 2)
+
+    emoji_profit = "🟢" if profit >= 0 else "🔴"
 
     mensaje = (
         "📊 Estadísticas\n\n"
         f"📌 Total apuestas: {total}\n"
         f"✅ Aciertos: {wins}\n"
         f"❌ Fallos: {loses}\n"
-        f"📈 Winrate: {winrate}%"
+        f"📈 Winrate: {winrate}%\n"
+        f"{emoji_profit} Profit: {profit}u"
     )
 
     await message.reply_text(mensaje)
