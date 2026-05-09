@@ -73,7 +73,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
     await update.message.reply_photo(
-    photo="https://github.com/MitoNacho/telegram-bets-bot/banner.jpeg",
+    photo="https://github.com/MitoNacho/telegram-bets-bot/blob/2db78a6a300bd24689b9179eac3dbee0e2bdacf8/banner.jpeg",
 
     caption=(
         "📊 Bot de Bebeto activo\n\n"
