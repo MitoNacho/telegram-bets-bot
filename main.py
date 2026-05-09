@@ -264,6 +264,7 @@ async def estadisticas(update: Update, context: ContextTypes.DEFAULT_TYPE):
         winrate = round((wins / (wins + loses)) * 100, 2)
 
 
+
     cursor.execute(
         "SELECT cuota, resultado FROM bets WHERE resultado != 'pendiente'"
     )
