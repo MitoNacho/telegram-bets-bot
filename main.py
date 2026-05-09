@@ -72,10 +72,24 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         resize_keyboard=True
     )
 
-    await update.message.reply_text(
-    "📊 Bienvenido a Bebeto Bets",
+    await update.message.reply_photo(
+    photo="https://github.com/MitoNacho/telegram-bets-bot/blob/e3904d5ff20cc5949ee0ffaf8c00f12caefcc9f9/banner.jpeg",
+
+    caption=(
+        "📊 Bot de Bebeto activo\n\n"
+        "🔥 Picks diarios\n"
+        "⚽ FUTBOL\n"
+        "🥊 UFC\n"
+        "📈 Estadísticas reales\n"
+        "⚡ Combinadas premium"
+    ),
+
     reply_markup=reply_markup
 )
+
+# =========================
+# MENU FIJO
+# =========================
 
 async def menu_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
