@@ -158,17 +158,6 @@ El token del bot se gestiona mediante variables de entorno.
 
 ---
 
-# 📌 Roadmap
-
-* [ ] Panel web admin
-* [ ] PostgreSQL
-* [ ] Sistema VIP
-* [ ] Imágenes automáticas de picks
-* [ ] Canal automático Telegram
-* [ ] Stake & Yield
-* [ ] API REST
-
----
 
 # 🧠 Autor
 
