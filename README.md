@@ -7,13 +7,21 @@ Bot de Telegram para compartir apuestas deportivas, estadísticas y picks en tie
 ## ✨ Features
 
 ✅ Publicación de apuestas simples y combinadas
+
 ✅ Cálculo automático de cuotas combinadas
+
 ✅ Historial de picks
+
 ✅ Estadísticas automáticas (winrate, wins, loses)
+
 ✅ Botones interactivos de Telegram
+
 ✅ SQLite persistente
+
 ✅ Deploy 24/7 en Railway
+
 ✅ Sistema admin protegido
+
 
 ---
 
