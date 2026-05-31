@@ -17,7 +17,6 @@ Bot de Telegram para compartir apuestas deportivas, estadísticas y picks en tie
 
 ---
 
-# 📸 Preview
 
 ## 📋 Bets activas
 
